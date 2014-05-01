@@ -39,7 +39,9 @@ int main(int argc, char *argv[])
               error("ERROR on binding");
      listen(sockfd,5);
      clilen = sizeof(cli_addr);
-     newsockfd = accept(sockfd,
+     while(1)
+     {
+             newsockfd = accept(sockfd,
                  (struct sockaddr *) &cli_addr,
                  &clilen);
      if (newsockfd < 0)
@@ -121,6 +123,7 @@ int main(int argc, char *argv[])
      printf("n : %d", n);
      if (n < 0) error("ERROR writing to socket");
      close(newsockfd);
+     }
      close(sockfd);
      return 0;
 }
