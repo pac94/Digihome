@@ -1,0 +1,10 @@
+# depslib dependency file v1.0
+1398863514 source:/home/pierre/Documents/codeblocks/Digihome_bridge/main.cpp
+	<iostream>
+	<stdio.h>
+	<sys/types.h>
+	<sys/socket.h>
+	<netinet/in.h>
+	<stdlib.h>
+	<strings.h>
+
