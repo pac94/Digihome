@@ -8,3 +8,17 @@
 	<stdlib.h>
 	<strings.h>
 
+1398975562 source:/home/pierre/Documents/Github/Digihome/cpp/Digihome_bridge/main.cpp
+	<iostream>
+	<stdio.h>
+	<sys/types.h>
+	<sys/socket.h>
+	<netinet/in.h>
+	<stdlib.h>
+	<unistd.h>
+	<string.h>
+	<jsoncpp/json.h>
+	<fcntl.h>
+	<termios.h>
+	<errno.h>
+
