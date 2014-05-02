@@ -10,6 +10,7 @@
 #include <fcntl.h>
 #include <termios.h>
 #include <errno.h>
+#include "include/Led.h"
 
 using namespace std;
 
@@ -26,6 +27,14 @@ int main(int argc, char *argv[])
      char buffer[256];
      struct sockaddr_in serv_addr, cli_addr;
      int n;
+     Led led("chambre",2,3,4);
+     int tab[20];
+     int val = led.To_serial_format(tab);
+     for(int i = 0;i < val; i++)
+     {
+        cout << tab[i]<<endl;
+     }
+
      sockfd = socket(AF_INET, SOCK_STREAM, 0);
      if (sockfd < 0)
         error("ERROR opening socket");
