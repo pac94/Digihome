@@ -32,11 +32,13 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
-		<Unit filename="include/Color.h" />
+		<Unit filename="include/Equipement.h" />
 		<Unit filename="include/Led.h" />
+		<Unit filename="include/Pin.h" />
 		<Unit filename="main.cpp" />
-		<Unit filename="src/Color.cpp" />
+		<Unit filename="src/Equipement.cpp" />
 		<Unit filename="src/Led.cpp" />
+		<Unit filename="src/Pin.cpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />

@@ -11,6 +11,8 @@
 #include <termios.h>
 #include <errno.h>
 #include "include/Led.h"
+#include "include/Equipement.h"
+
 
 using namespace std;
 
@@ -19,6 +21,7 @@ void error(const char *msg)
     perror(msg);
     exit(1);
 }
+
 
 int main(int argc, char *argv[])
 {
