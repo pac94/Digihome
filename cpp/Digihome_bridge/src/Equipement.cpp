@@ -1,8 +1,9 @@
 #include "../include/Equipement.h"
 
-Equipement::Equipement()
+Equipement::Equipement(string _room, int _type)
 {
-    //ctor
+    room = _room;
+    type = _type;
 }
 
 Equipement::~Equipement()

@@ -14,6 +14,17 @@ Led::~Led()
 {
     //dtor
 }
+
+void Led::allumer()
+{
+    Set_led_color(1, 1, 1);
+}
+
+void Led::eteindre()
+{
+     Set_led_color(0, 0, 0);
+}
+
 void Led::Set_led_color(int red_state, int green_state, int blue_state)
 {
     red.Setstate(red_state);
