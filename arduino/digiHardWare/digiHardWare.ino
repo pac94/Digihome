@@ -16,17 +16,20 @@
  http://www.arduino.cc/en/Tutorial/SerialEvent
  
  */
+#define jaune 2
+#define orange 3
+#define vert 7
 
-String inputString = "";         // a string to hold incoming data
+int z = 0;
+int inputString[30];         // a string to hold incoming data
 boolean stringComplete = false;  // whether the string is complete
 
 void setup() {
   // initialize serial:
   pinMode(2, OUTPUT);
   pinMode(3, OUTPUT);
+  pinMode(7, OUTPUT);
   Serial.begin(9600);
-  // reserve 200 bytes for the inputString:
-  inputString.reserve(200);
 }
 
 void loop() {
@@ -36,12 +39,13 @@ void loop() {
     if(inputString[0] == 0x7E)
     {
       size = inputString[1];
-      if(inputString[i + size + 1] == 0xE7)
+      if(inputString[size + 2] == 0xE7)
       {
         switch(inputString[2])
         {
           case 1 :
                     set_state();
+                    break;
           case 2 :
                     get_state();        
                     break;
@@ -49,11 +53,9 @@ void loop() {
                     get_state();
         }
       }      
-    }
-    Serial.println(inputString); 
+    } 
     // clear the string:
-    inputString = "";
-    Serial.write();
+    //Serial.write();
     stringComplete = false;
   }
   
@@ -69,12 +71,15 @@ void loop() {
 void serialEvent() {
   while (Serial.available()) {
     // get the new byte:
-    char inChar = (char)Serial.read(); 
+    int inChar = (int)Serial.read(); 
     // add it to the inputString:
-    inputString += inChar;
+    inputString [z++]= inChar;
     // if the incoming character is a newline, set a flag
     // so the main loop can do something about it:
-    if (inChar == 0xE7) {
+    //Serial.print((int)inChar);
+    if (inChar == 231) {
+      z = 0;
+      Serial.println("ICI");
       stringComplete = true;
     } 
   }
@@ -82,8 +87,12 @@ void serialEvent() {
 
 void set_state()
 {
+  int i = 0;
   while(i < (inputString[1] - 1))
   {
+     Serial.print(inputString[3 + i]);
+     Serial.print(" : ");
+     Serial.println(inputString[4 + i]);
     digitalWrite(inputString[3 + i], inputString[4 + i]);
     i += 2;
   }
