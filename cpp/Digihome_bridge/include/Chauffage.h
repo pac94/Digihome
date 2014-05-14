@@ -12,6 +12,7 @@ class Chauffage : public Equipement
         virtual ~Chauffage();
         void allumer();
         void eteindre();
+        void ToArduinoFormat(int* buff);
     protected:
     private:
         Pin pin;

@@ -10,6 +10,7 @@ class Equipement
         virtual ~Equipement();
         virtual void allumer() = 0;
         virtual void eteindre() = 0;
+        virtual void ToArduinoFormat(int *buff) = 0;
         string Getroom(){ return room;};
         int Gettype(){return type;};
     protected:

@@ -5,17 +5,17 @@
 #include "Equipement.h"
 using namespace std;
 
-class Moteur
+class Moteur : public Equipement
 {
     public:
         Moteur(string _room, int _pinNumber);
         virtual ~Moteur();
         void allumer();
         void eteindre();
+        void ToArduinoFormat(int* buff);
     protected:
     private:
-    Pin pin;
-    string room;
+        Pin pin;
 };
 
 #endif // MOTEUR_H

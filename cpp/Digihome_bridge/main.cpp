@@ -13,6 +13,8 @@
 #include "include/Led.h"
 #include "include/Equipement.h"
 #include "include/Chauffage.h"
+#include "include/Moteur.h"
+
 
 using namespace std;
 
@@ -31,15 +33,18 @@ int main(int argc, char *argv[])
      char buffer[256];
      struct sockaddr_in serv_addr, cli_addr;
      int n;
+     int test[30];
      //Led led("chambre",2,3,4);
      liste.push_back(new Led("chambre",2,3,4));
      liste.push_back(new Chauffage("salon",5));
+     liste.push_back(new Moteur("cuisine",7));
      int tab[20];
-     for(int i = 0;i < 2; i++)
+     for(int i = 0;i < 3; i++)
      {
         cout << liste[i]->Gettype() << " : " << liste[i]->Getroom() << endl;
      }
-
+        liste[0]->ToArduinoFormat(test);
+        //liste[0]->Set_led_color(1,1,1);
      while(1);
      for(int i = 0;i < 2; i++)
      {

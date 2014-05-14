@@ -31,7 +31,7 @@ void Led::Set_led_color(int red_state, int green_state, int blue_state)
     blue.Setstate(blue_state);
 }
 
-int Led::To_serial_format(int* buff)
+void Led::ToArduinoFormat(int* buff)
 {
     buff[0] = 0x7E;
     buff[1] = 0x07;
@@ -43,6 +43,6 @@ int Led::To_serial_format(int* buff)
     buff[7] = blue.Getnumber();
     buff[8] = blue.Getstate();
     buff[9] = 0xE7;
-    return 10;
+//    return 10;
 }
 
