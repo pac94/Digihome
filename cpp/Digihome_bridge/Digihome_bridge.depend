@@ -22,7 +22,7 @@
 	<termios.h>
 	<errno.h>
 
-1399886688 source:/home/pierre/Documents/Digihome/cpp/Digihome_bridge/main.cpp
+1400083994 source:/home/pierre/Documents/Digihome/cpp/Digihome_bridge/main.cpp
 	<iostream>
 	<stdio.h>
 	<sys/types.h>
@@ -37,24 +37,26 @@
 	<errno.h>
 	"include/Led.h"
 	"include/Equipement.h"
+	"include/Chauffage.h"
 
 1399028605 source:/home/pierre/Documents/Digihome/cpp/Digihome_bridge/src/Color.cpp
 	"../include/Color.h"
 
 1399028682 /home/pierre/Documents/Digihome/cpp/Digihome_bridge/include/Color.h
 
-1399990059 source:/home/pierre/Documents/Digihome/cpp/Digihome_bridge/src/Led.cpp
+1400084001 source:/home/pierre/Documents/Digihome/cpp/Digihome_bridge/src/Led.cpp
 	"../include/Led.h"
 	"../include/Pin.h"
 
-1399990146 /home/pierre/Documents/Digihome/cpp/Digihome_bridge/include/Led.h
+1400083968 /home/pierre/Documents/Digihome/cpp/Digihome_bridge/include/Led.h
 	<string>
 	"Pin.h"
 	"Equipement.h"
 
-1399989877 /home/pierre/Documents/Digihome/cpp/Digihome_bridge/include/Equipement.h
+1400083955 /home/pierre/Documents/Digihome/cpp/Digihome_bridge/include/Equipement.h
+	<string>
 
-1399886192 source:/home/pierre/Documents/Digihome/cpp/Digihome_bridge/src/Equipement.cpp
+1399991814 source:/home/pierre/Documents/Digihome/cpp/Digihome_bridge/src/Equipement.cpp
 	"../include/Equipement.h"
 
 1399887082 /home/pierre/Documents/Digihome/cpp/Digihome_bridge/include/Pin.h
@@ -62,10 +64,18 @@
 1399887170 source:/home/pierre/Documents/Digihome/cpp/Digihome_bridge/src/Pin.cpp
 	"../include/Pin.h"
 
-1399991032 source:/home/pierre/Documents/Digihome/cpp/Digihome_bridge/src/Chauffage.cpp
+1400080014 source:/home/pierre/Documents/Digihome/cpp/Digihome_bridge/src/Chauffage.cpp
 	"../include/Chauffage.h"
 
-1399990983 /home/pierre/Documents/Digihome/cpp/Digihome_bridge/include/Chauffage.h
+1400080002 /home/pierre/Documents/Digihome/cpp/Digihome_bridge/include/Chauffage.h
+	<string>
+	"Pin.h"
+	"Equipement.h"
+
+1399991458 source:/home/pierre/Documents/Digihome/cpp/Digihome_bridge/src/Moteur.cpp
+	"../include/Moteur.h"
+
+1399991361 /home/pierre/Documents/Digihome/cpp/Digihome_bridge/include/Moteur.h
 	<string>
 	"Pin.h"
 	"Equipement.h"

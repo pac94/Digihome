@@ -1,9 +1,8 @@
 #include "../include/Chauffage.h"
 
-Chauffage::Chauffage(string _room, int _pin)
+Chauffage::Chauffage(string _room, int _pin):Equipement(_room, 3)
 {
     pin.Setnumber(_pin);
-    room = _room;
 }
 
 Chauffage::~Chauffage()
@@ -21,14 +20,3 @@ void Chauffage::eteindre()
     pin.Setstate(0);
 }
 
-Chauffage::Chauffage(const Chauffage& other)
-{
-    //copy ctor
-}
-
-Chauffage& Chauffage::operator=(const Chauffage& rhs)
-{
-    if (this == &rhs) return *this; // handle self assignment
-    //assignment operator
-    return *this;
-}

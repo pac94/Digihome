@@ -1,9 +1,8 @@
 #include "../include/Led.h"
 #include "../include/Pin.h"
 
-Led::Led(string _room, int _Red_pin, int _Green_pin, int _Blue_pin)
+Led::Led(string _room, int _Red_pin, int _Green_pin, int _Blue_pin):Equipement(_room, 1)
 {
-    room = _room;
     red.Setnumber( _Red_pin);
     green.Setnumber( _Green_pin);
     blue.Setnumber( _Blue_pin);
@@ -47,7 +46,3 @@ int Led::To_serial_format(int* buff)
     return 10;
 }
 
-int Led::get_type()
-{
-    return type;
-}

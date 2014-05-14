@@ -12,7 +12,7 @@
 #include <errno.h>
 #include "include/Led.h"
 #include "include/Equipement.h"
-
+#include "include/Chauffage.h"
 
 using namespace std;
 
@@ -25,15 +25,23 @@ void error(const char *msg)
 
 int main(int argc, char *argv[])
 {
+    vector<Equipement*> liste;
      int sockfd, newsockfd, portno,serial_fd ;
      socklen_t clilen;
      char buffer[256];
      struct sockaddr_in serv_addr, cli_addr;
      int n;
-     Led led("chambre",2,3,4);
+     //Led led("chambre",2,3,4);
+     liste.push_back(new Led("chambre",2,3,4));
+     liste.push_back(new Chauffage("salon",5));
      int tab[20];
-     int val = led.To_serial_format(tab);
-     for(int i = 0;i < val; i++)
+     for(int i = 0;i < 2; i++)
+     {
+        cout << liste[i]->Gettype() << " : " << liste[i]->Getroom() << endl;
+     }
+
+     while(1);
+     for(int i = 0;i < 2; i++)
      {
         cout << tab[i]<<endl;
      }

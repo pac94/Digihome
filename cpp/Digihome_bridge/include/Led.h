@@ -10,16 +10,12 @@ class Led : public Equipement
     public:
         Led(string room, int Red_pin, int Green_pin, int Blue_pin);
         virtual ~Led();
-        string Get_room() { return room; }
-        void Set_room(string val) { room = val; }
         void allumer();
         void eteindre();
         void Set_led_color(int red_state, int green_state, int blue_state);
         int To_serial_format(int* buff);
-        int get_type();
     protected:
     private:
-        string room;
         Pin red;
         Pin blue;
         Pin green;
