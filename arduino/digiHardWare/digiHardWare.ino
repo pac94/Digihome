@@ -49,6 +49,9 @@ void loop() {
           case 2 :
                     get_state();        
                     break;
+          case 3 : 
+                    manage_temperature();
+                    break;
           default :
                     get_state();
         }
@@ -99,6 +102,11 @@ void set_state()
 }
 
 void get_state()
+{
+  
+}
+
+void manage_temperature()
 {
   
 }
