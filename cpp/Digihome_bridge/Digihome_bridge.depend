@@ -8,7 +8,7 @@
 	<stdlib.h>
 	<strings.h>
 
-1400104060 source:/home/pierre/Documents/Github/Digihome/cpp/Digihome_bridge/main.cpp
+1402496262 source:/home/pierre/Documents/Github/Digihome/cpp/Digihome_bridge/main.cpp
 	<iostream>
 	<stdio.h>
 	<sys/types.h>
@@ -25,6 +25,7 @@
 	"include/Equipement.h"
 	"include/Chauffage.h"
 	"include/Moteur.h"
+	<sstream>
 
 1400083994 source:/home/pierre/Documents/Digihome/cpp/Digihome_bridge/main.cpp
 	<iostream>
@@ -84,39 +85,40 @@
 	"Pin.h"
 	"Equipement.h"
 
-1400103638 source:/home/pierre/Documents/Github/Digihome/cpp/Digihome_bridge/src/Chauffage.cpp
+1401050154 source:/home/pierre/Documents/Github/Digihome/cpp/Digihome_bridge/src/Chauffage.cpp
 	"../include/Chauffage.h"
 
-1400103643 /home/pierre/Documents/Github/Digihome/cpp/Digihome_bridge/include/Chauffage.h
+1401050109 /home/pierre/Documents/Github/Digihome/cpp/Digihome_bridge/include/Chauffage.h
 	<string>
 	"Pin.h"
 	"Equipement.h"
 
-1400101424 /home/pierre/Documents/Github/Digihome/cpp/Digihome_bridge/include/Pin.h
+1400501187 /home/pierre/Documents/Github/Digihome/cpp/Digihome_bridge/include/Pin.h
 
-1400103277 /home/pierre/Documents/Github/Digihome/cpp/Digihome_bridge/include/Equipement.h
+1401050343 /home/pierre/Documents/Github/Digihome/cpp/Digihome_bridge/include/Equipement.h
 	<string>
+	<inttypes.h>
 
-1400101424 source:/home/pierre/Documents/Github/Digihome/cpp/Digihome_bridge/src/Equipement.cpp
+1400591597 source:/home/pierre/Documents/Github/Digihome/cpp/Digihome_bridge/src/Equipement.cpp
 	"../include/Equipement.h"
 
-1400104207 source:/home/pierre/Documents/Github/Digihome/cpp/Digihome_bridge/src/Led.cpp
+1401049691 source:/home/pierre/Documents/Github/Digihome/cpp/Digihome_bridge/src/Led.cpp
 	"../include/Led.h"
 	"../include/Pin.h"
 
-1400103666 /home/pierre/Documents/Github/Digihome/cpp/Digihome_bridge/include/Led.h
+1401049709 /home/pierre/Documents/Github/Digihome/cpp/Digihome_bridge/include/Led.h
 	<string>
 	"Pin.h"
 	"Equipement.h"
 
-1400104235 source:/home/pierre/Documents/Github/Digihome/cpp/Digihome_bridge/src/Moteur.cpp
+1401050175 source:/home/pierre/Documents/Github/Digihome/cpp/Digihome_bridge/src/Moteur.cpp
 	"../include/Moteur.h"
 
-1400103895 /home/pierre/Documents/Github/Digihome/cpp/Digihome_bridge/include/Moteur.h
+1401050191 /home/pierre/Documents/Github/Digihome/cpp/Digihome_bridge/include/Moteur.h
 	<string>
 	"Pin.h"
 	"Equipement.h"
 
-1400101424 source:/home/pierre/Documents/Github/Digihome/cpp/Digihome_bridge/src/Pin.cpp
+1400501187 source:/home/pierre/Documents/Github/Digihome/cpp/Digihome_bridge/src/Pin.cpp
 	"../include/Pin.h"
 

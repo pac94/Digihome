@@ -1,6 +1,6 @@
 #include "../include/Moteur.h"
 
-Moteur::Moteur(string _room, int _pinNumber):Equipement(_room, 2)
+Moteur::Moteur(string _room, int _pinNumber):Equipement(_room, "moteur")
 {
     pin.Setnumber(_pinNumber);
 }
@@ -20,7 +20,7 @@ void Moteur::eteindre()
     pin.Setstate(0);
 }
 
-void Moteur::ToArduinoFormat(int* buff)
+uint8_t Moteur::ToArduinoFormat(uint8_t* buff)
 {
     buff[0] = 0x7E;
     buff[1] = 0x03;
@@ -28,4 +28,5 @@ void Moteur::ToArduinoFormat(int* buff)
     buff[3] = pin.Getnumber();
     buff[4] = pin.Getstate();
     buff[9] = 0xE7;
+    return 6;
 }

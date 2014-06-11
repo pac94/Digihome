@@ -13,7 +13,8 @@ class Led : public Equipement
         void allumer();
         void eteindre();
         void Set_led_color(int red_state, int green_state, int blue_state);
-        void ToArduinoFormat(int* buff);
+        int Get_led_color();
+        uint8_t ToArduinoFormat(uint8_t* buff);
     protected:
     private:
         Pin red;

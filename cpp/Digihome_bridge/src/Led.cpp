@@ -1,7 +1,7 @@
 #include "../include/Led.h"
 #include "../include/Pin.h"
 
-Led::Led(string _room, int _Red_pin, int _Green_pin, int _Blue_pin):Equipement(_room, 1)
+Led::Led(string _room, int _Red_pin, int _Green_pin, int _Blue_pin):Equipement(_room, "led")
 {
     red.Setnumber( _Red_pin);
     green.Setnumber( _Green_pin);
@@ -31,7 +31,12 @@ void Led::Set_led_color(int red_state, int green_state, int blue_state)
     blue.Setstate(blue_state);
 }
 
-void Led::ToArduinoFormat(int* buff)
+int Led::Get_led_color()
+{
+    return (red.Getstate()*4) + (green.Getstate()*2) + (blue.Getstate()*1);
+}
+
+uint8_t Led::ToArduinoFormat(uint8_t * buff)
 {
     buff[0] = 0x7E;
     buff[1] = 0x07;
@@ -43,6 +48,6 @@ void Led::ToArduinoFormat(int* buff)
     buff[7] = blue.Getnumber();
     buff[8] = blue.Getstate();
     buff[9] = 0xE7;
-//    return 10;
+    return 10;
 }
 

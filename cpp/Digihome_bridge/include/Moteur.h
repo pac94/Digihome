@@ -12,7 +12,7 @@ class Moteur : public Equipement
         virtual ~Moteur();
         void allumer();
         void eteindre();
-        void ToArduinoFormat(int* buff);
+        uint8_t ToArduinoFormat(uint8_t* buff);
     protected:
     private:
         Pin pin;
