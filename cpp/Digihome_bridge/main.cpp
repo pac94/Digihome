@@ -40,12 +40,6 @@ int main(int argc, char *argv[])
      liste.push_back(new Led("chambre1",5,6,7));
      liste.push_back(new Chauffage("salon",5));
      liste.push_back(new Moteur("cuisine",7));
-//     int tab[20];
-
-
-    dynamic_cast<Led*>(liste[0])->Set_led_color(1,0,1);
-
-     //while(1);
      sockfd = socket(AF_INET, SOCK_STREAM, 0);
      if (sockfd < 0)
         error("ERROR opening socket");
@@ -84,9 +78,8 @@ int main(int argc, char *argv[])
 
         const Json::Value cmd = root["cmd"];
         printf("CMD = %d\n",cmd.asInt());
-        if(cmd.asInt() == 2)
+        if(cmd.asInt() == 3)
         {
-            printf("CMD = 2\n");
             stringstream ss;
             ss << "{\"error\" :\"ok\", \"state\": [";
             for(int j = 0; j < 2; j++)
@@ -102,9 +95,14 @@ int main(int argc, char *argv[])
             }
             ss << "]}";
             receive_buffer = ss.str();
+            test[0] = 0x7E;
+            test[1] = 0x01;
+            test[2] = 0x03;
+            test[3] = 0xE7;
+            numb = 4;
 
         }
-        else
+        if(cmd.asInt() == 1)
         {
             const Json::Value sensor = root["sensor"];
         const Json::Value status = root["status"];
@@ -134,12 +132,9 @@ int main(int argc, char *argv[])
         if(color /1)
         {
             col[2] = 1;
-            //color = color % 4;
         }
         else
             col[2] = 0;
-
-            //cout<< "sensor :"<< sensor.asString()<< " status :"<<status.asString()<< " room : "<< room.asString() <<endl;
 
             for(int i = 0;i < 3; i++)
             {
@@ -156,6 +151,7 @@ int main(int argc, char *argv[])
                     cout << "error comapre" << endl;
 
 
+        }
         }
         serial_fd = open("/dev/ttyUSB0", O_RDWR | O_NOCTTY  |   O_NONBLOCK);
 
@@ -190,28 +186,45 @@ int main(int argc, char *argv[])
      tcflush(serial_fd, TCIFLUSH);
      tcsetattr(serial_fd,TCSANOW,&tty);
 
-        //Now the port is ready to work
-        //Write anything you want to the port;
-        //It`s stored in buf
-//        int send = col[0] + (col[1] *2)  + (col[2]*4);
-        //cout << "val numb : "<< numb << endl;
         ssize_t nbwriten = write (serial_fd, &test, numb);
-        //printf("Error description is : %s\n",strerror(errno));
+            printf("Error description is : %s\n",strerror(errno));
         //Finally, you close the por
         int n = 0;
 std::string response;
 
-/*do
-{
-n = read( serial_fd, &buf, 1 );
-printf("buff : %d\n",buf);
-}
-while( buf != 25 && n > 0);*/
+
+fd_set read_fds, write_fds, except_fds;
+    FD_ZERO(&read_fds);
+    FD_ZERO(&write_fds);
+    FD_ZERO(&except_fds);
+    FD_SET(serial_fd, &read_fds);
+    uint8_t receiveBytes[200];
+    struct timeval timeout;
+    timeout.tv_sec = 1;
+    timeout.tv_usec = 0;
+
+while(select(serial_fd + 1, &read_fds, &write_fds, &except_fds, &timeout) > 0)
+        {
+            int res = read(serial_fd,&receiveBytes,200);
+            if(res == -1)
+                printf("%s",strerror(errno));
+            else{
+                for(int i = 0; i < res; i++)
+                    printf("res[%d] = %d\n",i, receiveBytes[i]);
+            }
+
+        }
+        /*else
+        {
+
+            printf("timeout\n");
+
+        }*/
 
 
 
         close(serial_fd);
-             }
+
         }
 
 
