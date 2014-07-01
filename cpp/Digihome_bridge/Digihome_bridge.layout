@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_layout_file>
 	<ActiveTarget name="Debug" />
+	<File name="include/Capteur.h" open="1" top="0" tabpos="11">
+		<Cursor position="75" topLine="0" />
+	</File>
 	<File name="include/Chauffage.h" open="1" top="0" tabpos="7">
 		<Cursor position="312" topLine="0" />
 	</File>
@@ -8,13 +11,16 @@
 		<Cursor position="289" topLine="0" />
 	</File>
 	<File name="include/Led.h" open="1" top="0" tabpos="2">
-		<Cursor position="389" topLine="0" />
+		<Cursor position="115" topLine="0" />
 	</File>
 	<File name="include/Moteur.h" open="1" top="0" tabpos="4">
 		<Cursor position="303" topLine="0" />
 	</File>
 	<File name="main.cpp" open="1" top="1" tabpos="1">
-		<Cursor position="4534" topLine="138" />
+		<Cursor position="732" topLine="15" />
+	</File>
+	<File name="src/Capteur.cpp" open="1" top="0" tabpos="12">
+		<Cursor position="237" topLine="0" />
 	</File>
 	<File name="src/Chauffage.cpp" open="1" top="0" tabpos="8">
 		<Cursor position="486" topLine="0" />
@@ -23,10 +29,10 @@
 		<Cursor position="13" topLine="0" />
 	</File>
 	<File name="src/Led.cpp" open="1" top="0" tabpos="3">
-		<Cursor position="580" topLine="11" />
+		<Cursor position="57" topLine="0" />
 	</File>
 	<File name="src/Moteur.cpp" open="1" top="0" tabpos="5">
-		<Cursor position="473" topLine="0" />
+		<Cursor position="10" topLine="0" />
 	</File>
 	<File name="src/Pin.cpp" open="1" top="0" tabpos="10">
 		<Cursor position="0" topLine="0" />

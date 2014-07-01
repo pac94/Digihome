@@ -1,8 +1,10 @@
 #include "../include/Led.h"
 #include "../include/Pin.h"
+#include <jsoncpp/json.h>
 
 Led::Led(string _room, int _Red_pin, int _Green_pin, int _Blue_pin):Equipement(_room, "led")
 {
+    room = _room;
     red.Setnumber( _Red_pin);
     green.Setnumber( _Green_pin);
     blue.Setnumber( _Blue_pin);
@@ -51,3 +53,22 @@ uint8_t Led::ToArduinoFormat(uint8_t * buff)
     return 10;
 }
 
+Json::Value Led::ToJsonFormat()
+{
+    Json::Value led;
+    led["sensor"] = "led";
+    int val = Get_led_color();
+    if(val <= 0)
+    {
+        led["statut"] = "off";
+        led["color"] = 0;
+    }
+    else
+    {
+        led["statut"] = "on";
+        led["color"] = val;
+    }
+    led["room"] = room;
+
+    return led;
+}

@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <jsoncpp/json.h>
+#include <jsoncpp/writer.h>
 #include <fcntl.h>
 #include <termios.h>
 #include <errno.h>
@@ -14,6 +15,7 @@
 #include "include/Equipement.h"
 #include "include/Chauffage.h"
 #include "include/Moteur.h"
+#include "include/Capteur.h"
 #include <sstream>
 
 using namespace std;
@@ -23,17 +25,19 @@ void error(const char *msg)
     perror(msg);
     exit(1);
 }
-
-
+uint8_t serialTransfert(uint8_t* buffwrt, uint8_t nbwrt, uint8_t* buffread);
+string getState();
+string setState(Json::Value root);
+vector<Equipement*> liste;
 int main(int argc, char *argv[])
 {
-    vector<Equipement*> liste;
+
     int sockfd, newsockfd, portno, serial_fd ;
      socklen_t clilen;
      char buffer[256];
      struct sockaddr_in serv_addr, cli_addr;
      int n;
-     uint8_t test[30],numb,buf = 0;
+     uint8_t test[30],numb,buf = 0, test2[200];
      string receive_buffer = "{\"error\" : \"ok\"}";
      //Led led("chambre",2,3,4);
      liste.push_back(new Led("chambre",2,3,4));
@@ -80,31 +84,154 @@ int main(int argc, char *argv[])
         printf("CMD = %d\n",cmd.asInt());
         if(cmd.asInt() == 3)
         {
-            stringstream ss;
-            ss << "{\"error\" :\"ok\", \"state\": [";
-            for(int j = 0; j < 2; j++)
-            {
-                int sendcolor = dynamic_cast<Led*>(liste[j])->Get_led_color();
-                string mystatus = "off";
-                if(sendcolor)
-                    mystatus = "on";
-                ss << "{ \"sensor\":\"" << liste[j]->Gettype() << "\", \"status\":\"" << mystatus << "\",\"color\":" << sendcolor << ",\"room\":\"" << liste[j]->Getroom() <<"\" }";
-                if(j == 0)
-                    ss << ",";
-
-            }
-            ss << "]}";
-            receive_buffer = ss.str();
-            test[0] = 0x7E;
-            test[1] = 0x01;
-            test[2] = 0x03;
-            test[3] = 0xE7;
-            numb = 4;
-
+            receive_buffer = getState();
         }
         if(cmd.asInt() == 1)
         {
-            const Json::Value sensor = root["sensor"];
+            receive_buffer = setState(root);
+        }
+
+
+        }
+
+
+    char *cstr = new char[receive_buffer.length() + 1];
+    strcpy(cstr, receive_buffer.c_str());
+    printf("%s\n", cstr);
+     n = write(newsockfd,cstr,receive_buffer.length());
+     if (n < 0) error("ERROR writing to socket");
+     close(newsockfd);
+     }
+     close(sockfd);
+     return 0;
+}
+
+
+uint8_t serialTransfert(uint8_t* buffwrt, uint8_t nbwrt, uint8_t* buffread)
+{
+    int serial_fd;
+            serial_fd = open("/dev/ttyUSB0", O_RDWR | O_NOCTTY  |   O_NONBLOCK);
+
+        if (serial_fd==-1) {
+        printf ("Error opening the serial device: /dev/ttyUSB0");
+        perror("OPEN");
+        exit(0);
+        }
+
+        struct termios tty;
+        memset (&tty, 0, sizeof tty);
+
+
+        cfsetospeed (&tty, B9600);
+        cfsetispeed (&tty, B9600);
+
+    tty.c_cflag |= B9600 ;
+    tty.c_cflag     &=  ~PARENB;        // Make 8n1
+    tty.c_cflag     &=  ~CSTOPB;
+    tty.c_cflag     &=  ~CSIZE;
+    tty.c_cflag     |=  CS8;
+    tty.c_lflag &= ~ICANON;
+    tty.c_cflag     &=  ~CRTSCTS;       // no flow control
+
+     /* positionne le mode de lecture (non canonique, sans echo, ...) */
+     tty.c_lflag = 0;
+
+     tty.c_cc[VTIME]    = 100;   /* timer inter-caractÃ¨res non utilisÃ© */
+     tty.c_cc[VMIN]     = 0;   /* read bloquant jusqu'Ã  ce que 5 */
+                                  /* caractÃ¨res soient lus */
+    cfmakeraw(&tty);
+     tcflush(serial_fd, TCIFLUSH);
+     tcsetattr(serial_fd,TCSANOW,&tty);
+
+        ssize_t nbwriten = write (serial_fd, buffwrt, nbwrt);
+            printf("Error description is : %s\n",strerror(errno));
+        //Finally, you close the por
+        int n = 0;
+std::string response;
+
+
+fd_set read_fds, write_fds, except_fds;
+    FD_ZERO(&read_fds);
+    FD_ZERO(&write_fds);
+    FD_ZERO(&except_fds);
+    FD_SET(serial_fd, &read_fds);
+    uint8_t receiveBytes[200];
+    struct timeval timeout;
+    timeout.tv_sec = 1;
+    timeout.tv_usec = 0;
+    uint8_t offset = 0;
+while(select(serial_fd + 1, &read_fds, &write_fds, &except_fds, &timeout) > 0)
+        {
+            int res = read(serial_fd,buffread + offset,200);
+            if(res == -1)
+                printf("%s",strerror(errno));
+            else{
+                offset += res;
+
+            }
+
+        }
+        /*else
+        {
+
+            printf("timeout\n");
+
+        }*/
+
+
+
+        close(serial_fd);
+        return offset;
+}
+
+string getState()
+{
+    uint8_t test[10], test2[200];
+    Capteur* temp = new Capteur("chambre", "temperature",0.0);
+    Capteur* mouv = new Capteur("entree", "mouvement",0.0);
+    Capteur* pres = new Capteur("cuisine", "pression",0.0);
+    test[0] = 0x7E;
+    test[1] = 0x01;
+    test[2] = 0x03;
+    test[3] = 0xE7;
+    uint8_t numb = 4;
+
+    int retrun = serialTransfert(test, numb, test2);
+            for(int i = 0; i < retrun; i++)
+                    printf("test2[%d] = %d\n",i, test2[i]);
+
+dynamic_cast<Led*>(liste[0])->Set_led_color(test2[3],test2[4],test2[5]);
+dynamic_cast<Led*>(liste[1])->Set_led_color(test2[6],test2[7],test2[8]);
+Json::Value event;
+Json::Value led1 = dynamic_cast<Led*>(liste[0])->ToJsonFormat();
+Json::Value led2 = dynamic_cast<Led*>(liste[1])->ToJsonFormat();
+Json::Value tempsens;
+temp->Setvalue((float)(test2[9] *100 + test2[10])/100);
+mouv->Setvalue((float)test2[11]);
+pres->Setvalue((float)(test2[12] *100 + test2[13])/100);
+    Json::Value vec(Json::arrayValue);
+    vec.append(led1);
+    vec.append(led2);
+    vec.append(temp->ToJsonFormat());
+    vec.append(mouv->ToJsonFormat());
+    vec.append(pres->ToJsonFormat());
+    event["error"] = "ok";
+    event["state"]= vec;
+    cout << event << endl;
+    Json::FastWriter fastWriter;
+    string jsonMessage = fastWriter.write(event);
+
+
+    return jsonMessage;
+}
+
+string setState(Json::Value root)
+{
+    uint8_t test[50], test2[200];
+
+
+    uint8_t numb = 4;
+                const Json::Value sensor = root["sensor"];
         const Json::Value status = root["status"];
         const Json::Value room = root["room"];
 
@@ -152,89 +279,9 @@ int main(int argc, char *argv[])
 
 
         }
-        }
-        serial_fd = open("/dev/ttyUSB0", O_RDWR | O_NOCTTY  |   O_NONBLOCK);
+        int retrun = serialTransfert(test, numb, test2);
+            for(int i = 0; i < retrun; i++)
+                    printf("test2[%d] = %d\n",i, test2[i]);
 
-        if (serial_fd==-1) {
-        printf ("Error opening the serial device: /dev/ttyUSB0");
-        perror("OPEN");
-        exit(0);
-        }
-
-        struct termios tty;
-        memset (&tty, 0, sizeof tty);
-
-
-        cfsetospeed (&tty, B9600);
-        cfsetispeed (&tty, B9600);
-
-    tty.c_cflag |= B9600 ;
-    tty.c_cflag     &=  ~PARENB;        // Make 8n1
-    tty.c_cflag     &=  ~CSTOPB;
-    tty.c_cflag     &=  ~CSIZE;
-    tty.c_cflag     |=  CS8;
-    tty.c_lflag &= ~ICANON;
-    tty.c_cflag     &=  ~CRTSCTS;       // no flow control
-
-     /* positionne le mode de lecture (non canonique, sans echo, ...) */
-     tty.c_lflag = 0;
-
-     tty.c_cc[VTIME]    = 100;   /* timer inter-caractÃ¨res non utilisÃ© */
-     tty.c_cc[VMIN]     = 0;   /* read bloquant jusqu'Ã  ce que 5 */
-                                  /* caractÃ¨res soient lus */
-    cfmakeraw(&tty);
-     tcflush(serial_fd, TCIFLUSH);
-     tcsetattr(serial_fd,TCSANOW,&tty);
-
-        ssize_t nbwriten = write (serial_fd, &test, numb);
-            printf("Error description is : %s\n",strerror(errno));
-        //Finally, you close the por
-        int n = 0;
-std::string response;
-
-
-fd_set read_fds, write_fds, except_fds;
-    FD_ZERO(&read_fds);
-    FD_ZERO(&write_fds);
-    FD_ZERO(&except_fds);
-    FD_SET(serial_fd, &read_fds);
-    uint8_t receiveBytes[200];
-    struct timeval timeout;
-    timeout.tv_sec = 1;
-    timeout.tv_usec = 0;
-
-while(select(serial_fd + 1, &read_fds, &write_fds, &except_fds, &timeout) > 0)
-        {
-            int res = read(serial_fd,&receiveBytes,200);
-            if(res == -1)
-                printf("%s",strerror(errno));
-            else{
-                for(int i = 0; i < res; i++)
-                    printf("res[%d] = %d\n",i, receiveBytes[i]);
-            }
-
-        }
-        /*else
-        {
-
-            printf("timeout\n");
-
-        }*/
-
-
-
-        close(serial_fd);
-
-        }
-
-
-    char *cstr = new char[receive_buffer.length() + 1];
-    strcpy(cstr, receive_buffer.c_str());
-    printf("%s\n", cstr);
-     n = write(newsockfd,cstr,receive_buffer.length());
-     if (n < 0) error("ERROR writing to socket");
-     close(newsockfd);
-     }
-     close(sockfd);
-     return 0;
+                    return "{\"error\" : \"ok\"}";
 }

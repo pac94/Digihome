@@ -32,12 +32,14 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
+		<Unit filename="include/Capteur.h" />
 		<Unit filename="include/Chauffage.h" />
 		<Unit filename="include/Equipement.h" />
 		<Unit filename="include/Led.h" />
 		<Unit filename="include/Moteur.h" />
 		<Unit filename="include/Pin.h" />
 		<Unit filename="main.cpp" />
+		<Unit filename="src/Capteur.cpp" />
 		<Unit filename="src/Chauffage.cpp" />
 		<Unit filename="src/Equipement.cpp" />
 		<Unit filename="src/Led.cpp" />
