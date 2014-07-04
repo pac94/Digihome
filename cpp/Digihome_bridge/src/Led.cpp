@@ -60,15 +60,13 @@ Json::Value Led::ToJsonFormat()
     int val = Get_led_color();
     if(val <= 0)
     {
-        led["statut"] = "off";
         led["color"] = 0;
     }
     else
     {
-        led["statut"] = "on";
         led["color"] = val;
     }
-    led["room"] = room;
+    led["location"] = room;
 
     return led;
 }

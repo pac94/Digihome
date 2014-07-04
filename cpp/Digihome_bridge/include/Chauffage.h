@@ -3,6 +3,7 @@
 #include <string>
 #include "Pin.h"
 #include "Equipement.h"
+#include <jsoncpp/json.h>
 using namespace std;
 
 class Chauffage : public Equipement
@@ -13,9 +14,11 @@ class Chauffage : public Equipement
         void allumer();
         void eteindre();
         uint8_t ToArduinoFormat(uint8_t* buff);
+        Json::Value ToJsonFormat();
     protected:
     private:
         Pin pin;
+        string room;
 };
 
 #endif // CHAUFFAGE_H

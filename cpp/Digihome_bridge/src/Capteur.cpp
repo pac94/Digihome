@@ -16,7 +16,7 @@ Capteur::~Capteur()
 Json::Value Capteur::ToJsonFormat()
 {
     Json::Value capteur;
-    capteur["room"] = room;
+    capteur["location"] = room;
     capteur["sensor"] = type;
     capteur["value"] = value;
 

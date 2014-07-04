@@ -25,10 +25,11 @@ void error(const char *msg)
     perror(msg);
     exit(1);
 }
-uint8_t serialTransfert(uint8_t* buffwrt, uint8_t nbwrt, uint8_t* buffread);
+int serialTransfert(uint8_t* buffwrt, uint8_t nbwrt, uint8_t* buffread);
 string getState();
 string setState(Json::Value root);
 vector<Equipement*> liste;
+string receive_buffer;
 int main(int argc, char *argv[])
 {
 
@@ -38,12 +39,13 @@ int main(int argc, char *argv[])
      struct sockaddr_in serv_addr, cli_addr;
      int n;
      uint8_t test[30],numb,buf = 0, test2[200];
-     string receive_buffer = "{\"error\" : \"ok\"}";
+     receive_buffer = "{\"error\" : \"ok\"}";
      //Led led("chambre",2,3,4);
-     liste.push_back(new Led("chambre",2,3,4));
-     liste.push_back(new Led("chambre1",5,6,7));
-     liste.push_back(new Chauffage("salon",5));
-     liste.push_back(new Moteur("cuisine",7));
+     liste.push_back(new Led("piece1",2,3,4));
+     liste.push_back(new Led("piece2",5,6,7));
+     liste.push_back(new Led("piece3",8,8,8));
+     liste.push_back(new Chauffage("piece2",13));
+     liste.push_back(new Moteur("piece3",12,11));
      sockfd = socket(AF_INET, SOCK_STREAM, 0);
      if (sockfd < 0)
         error("ERROR opening socket");
@@ -107,7 +109,7 @@ int main(int argc, char *argv[])
 }
 
 
-uint8_t serialTransfert(uint8_t* buffwrt, uint8_t nbwrt, uint8_t* buffread)
+int serialTransfert(uint8_t* buffwrt, uint8_t nbwrt, uint8_t* buffread)
 {
     int serial_fd;
             serial_fd = open("/dev/ttyUSB0", O_RDWR | O_NOCTTY  |   O_NONBLOCK);
@@ -115,7 +117,8 @@ uint8_t serialTransfert(uint8_t* buffwrt, uint8_t nbwrt, uint8_t* buffread)
         if (serial_fd==-1) {
         printf ("Error opening the serial device: /dev/ttyUSB0");
         perror("OPEN");
-        exit(0);
+        //exit(0);
+        return -1;
         }
 
         struct termios tty;
@@ -157,7 +160,7 @@ fd_set read_fds, write_fds, except_fds;
     FD_SET(serial_fd, &read_fds);
     uint8_t receiveBytes[200];
     struct timeval timeout;
-    timeout.tv_sec = 1;
+    timeout.tv_sec = 2;
     timeout.tv_usec = 0;
     uint8_t offset = 0;
 while(select(serial_fd + 1, &read_fds, &write_fds, &except_fds, &timeout) > 0)
@@ -171,14 +174,6 @@ while(select(serial_fd + 1, &read_fds, &write_fds, &except_fds, &timeout) > 0)
             }
 
         }
-        /*else
-        {
-
-            printf("timeout\n");
-
-        }*/
-
-
 
         close(serial_fd);
         return offset;
@@ -187,9 +182,9 @@ while(select(serial_fd + 1, &read_fds, &write_fds, &except_fds, &timeout) > 0)
 string getState()
 {
     uint8_t test[10], test2[200];
-    Capteur* temp = new Capteur("chambre", "temperature",0.0);
-    Capteur* mouv = new Capteur("entree", "mouvement",0.0);
-    Capteur* pres = new Capteur("cuisine", "pression",0.0);
+    Capteur* temp = new Capteur("piece2", "temperature",0.0);
+    Capteur* mouv = new Capteur("piece1", "motion",0.0);
+    Capteur* pres = new Capteur("piece1", "pressure",0.0);
     test[0] = 0x7E;
     test[1] = 0x01;
     test[2] = 0x03;
@@ -197,21 +192,33 @@ string getState()
     uint8_t numb = 4;
 
     int retrun = serialTransfert(test, numb, test2);
-            for(int i = 0; i < retrun; i++)
+    if(retrun == -1)
+        return "{\"error\" : \"connexion echouee\"}";
+
+         for(int i = 0; i < retrun; i++)
                     printf("test2[%d] = %d\n",i, test2[i]);
 
 dynamic_cast<Led*>(liste[0])->Set_led_color(test2[3],test2[4],test2[5]);
 dynamic_cast<Led*>(liste[1])->Set_led_color(test2[6],test2[7],test2[8]);
+dynamic_cast<Led*>(liste[2])->Set_led_color(test2[9],test2[9],test2[9]);
+
+dynamic_cast<Moteur*>(liste[4])->set_pin_state(test2[15], test2[16]);
 Json::Value event;
 Json::Value led1 = dynamic_cast<Led*>(liste[0])->ToJsonFormat();
 Json::Value led2 = dynamic_cast<Led*>(liste[1])->ToJsonFormat();
+Json::Value led3 = dynamic_cast<Led*>(liste[2])->ToJsonFormat();
+Json::Value motor = dynamic_cast<Moteur*>(liste[4])->ToJsonFormat();
+Json::Value ac = dynamic_cast<Chauffage*>(liste[3])->ToJsonFormat();
 Json::Value tempsens;
-temp->Setvalue((float)(test2[9] *100 + test2[10])/100);
-mouv->Setvalue((float)test2[11]);
-pres->Setvalue((float)(test2[12] *100 + test2[13])/100);
+temp->Setvalue((float)(test2[10] *100 + test2[11])/100);
+mouv->Setvalue((float)test2[12]);
+pres->Setvalue((float)(test2[13] *100 + test2[14])/100);
     Json::Value vec(Json::arrayValue);
     vec.append(led1);
     vec.append(led2);
+    vec.append(led3);
+    vec.append(motor);
+    vec.append(ac);
     vec.append(temp->ToJsonFormat());
     vec.append(mouv->ToJsonFormat());
     vec.append(pres->ToJsonFormat());
@@ -232,55 +239,84 @@ string setState(Json::Value root)
 
     uint8_t numb = 4;
                 const Json::Value sensor = root["sensor"];
-        const Json::Value status = root["status"];
-        const Json::Value room = root["room"];
+
+        const Json::Value room = root["location"];
 
 
 
-       const Json::Value colorval = root["color"];
-        int color = colorval.asInt();
-        int col[3];
-        if(color /4)
-        {
-            col[0] = 1;
-            color = color % 4;
-        }
-        else
-            col[0] = 0;
 
-        if(color /2)
-        {
-            col[1] = 1;
-            color = color % 2;
-        }
-        else
-            col[1] = 0;
 
-        if(color /1)
-        {
-            col[2] = 1;
-        }
-        else
-            col[2] = 0;
-
-            for(int i = 0;i < 3; i++)
+            for(int i = 0;i < liste.size(); i++)
             {
                 if((sensor.asString().compare(liste[i]->Gettype()) == 0) && (room.asString().compare(liste[i]->Getroom()) == 0))
                 {
 
+                    if(sensor.asString() == "led")
+                    {
+                        const Json::Value colorval = root["color"];
+                        int color = colorval.asInt();
+                        int col[3];
+                        if(color /4)
+                        {
+                            col[0] = 1;
+                            color = color % 4;
+                        }
+                        else
+                            col[0] = 0;
 
-                                dynamic_cast<Led*>(liste[i])->Set_led_color(col[0],col[1],col[2]);
+                        if(color /2)
+                        {
+                            col[1] = 1;
+                            color = color % 2;
+                        }
+                        else
+                            col[1] = 0;
+
+                        if(color /1)
+                        {
+                            col[2] = 1;
+                        }
+                        else
+                            col[2] = 0;
+                        dynamic_cast<Led*>(liste[i])->Set_led_color(col[0],col[1],col[2]);
                                     numb = liste[i]->ToArduinoFormat(test);
+                    }
+                    if(sensor.asString() == "motor")
+                    {printf("motor\n");
+                        const Json::Value val = root["value"];
+                        int intVal = val.asInt();
+                        dynamic_cast<Moteur*>(liste[i])->set_motor_value(intVal);
+                                    numb = liste[i]->ToArduinoFormat(test);
+                    }
+
+                    if(sensor.asString() == "ac")
+                    {
+
+
+                        const Json::Value val = root["value"];
+                        int intVal = val.asInt();
+                        if(intVal == 0)
+                         dynamic_cast<Chauffage*>(liste[i])->eteindre();
+                        else
+                         dynamic_cast<Chauffage*>(liste[i])->allumer();
+                                    numb = liste[i]->ToArduinoFormat(test);
+                    }
+
 
                     break;
                 }
                 else
-                    cout << "error comapre" << endl;
+                    cout << "error compare" << endl;
 
 
         }
+        for(int i = 0; i < numb; i++)
+                    printf("test[%d] = %d\n",i, test[i]);
         int retrun = serialTransfert(test, numb, test2);
-            for(int i = 0; i < retrun; i++)
+    if(retrun == -1)
+        return "{\"error\" : \"connexion echouee\"}";
+
+         for(int i = 0; i < retrun; i++)
                     printf("test2[%d] = %d\n",i, test2[i]);
 
                     return "{\"error\" : \"ok\"}";

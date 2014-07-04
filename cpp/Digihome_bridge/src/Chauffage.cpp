@@ -1,7 +1,8 @@
 #include "../include/Chauffage.h"
 
-Chauffage::Chauffage(string _room, int _pin):Equipement(_room, "chauffage")
+Chauffage::Chauffage(string _room, int _pin):Equipement(_room, "ac")
 {
+    room = _room;
     pin.Setnumber(_pin);
 }
 
@@ -27,6 +28,18 @@ uint8_t Chauffage::ToArduinoFormat(uint8_t* buff)
     buff[2] = 0x01;
     buff[3] = pin.Getnumber();
     buff[4] = pin.Getstate();
-    buff[9] = 0xE7;
+    buff[5] = 0xE7;
     return 6;
+}
+
+Json::Value Chauffage::ToJsonFormat()
+{
+    Json::Value led;
+    led["sensor"] = "ac";
+
+        led["value"] = pin.Getstate();
+
+    led["location"] = room;
+
+    return led;
 }
